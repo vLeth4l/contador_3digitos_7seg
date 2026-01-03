@@ -1,19 +1,19 @@
 `default_nettype none
 `timescale 1ns / 1ps
 
-/* This testbench just instantiates the module and makes some convenient wires
-   that can be driven / tested by the cocotb test.py.
+/* Este testbench instancia el módulo y crea los cables necesarios
+   para que cocotb (Python) pueda controlar las señales del chip.
 */
 module tb ();
 
-  // Dump the signals to a FST file. You can view it with gtkwave or surfer.
+  // Generación del archivo de ondas para depuración
   initial begin
     $dumpfile("tb.fst");
     $dumpvars(0, tb);
     #1;
   end
 
-  // Wire up the inputs and outputs:
+  // Declaración de señales para conectar al chip
   reg clk;
   reg rst_n;
   reg ena;
@@ -22,28 +22,29 @@ module tb ();
   wire [7:0] uo_out;
   wire [7:0] uio_out;
   wire [7:0] uio_oe;
+
 `ifdef GL_TEST
   wire VPWR = 1'b1;
   wire VGND = 1'b0;
 `endif
 
-  // Replace tt_um_example with your module name:
-  tt_um_example user_project (
+  // --- INSTANCIACIÓN DE TU PROYECTO ---
+  // Se reemplaza tt_um_example por tu nombre de módulo único
+  tt_um_contador_3digitos_7seg user_project (
 
-      // Include power ports for the Gate Level test:
 `ifdef GL_TEST
       .VPWR(VPWR),
       .VGND(VGND),
 `endif
 
-      .ui_in  (ui_in),    // Dedicated inputs
-      .uo_out (uo_out),   // Dedicated outputs
-      .uio_in (uio_in),   // IOs: Input path
-      .uio_out(uio_out),  // IOs: Output path
-      .uio_oe (uio_oe),   // IOs: Enable path (active high: 0=input, 1=output)
-      .ena    (ena),      // enable - goes high when design is selected
-      .clk    (clk),      // clock
-      .rst_n  (rst_n)     // not reset
+      .ui_in  (ui_in),    // Entradas dedicadas
+      .uo_out (uo_out),   // Salidas dedicadas (Segmentos)
+      .uio_in (uio_in),   // Entradas de los pines E/S
+      .uio_out(uio_out),  // Salidas de los pines E/S (Dígitos)
+      .uio_oe (uio_oe),   // Control de dirección de los pines E/S
+      .ena    (ena),      // Habilitación del diseño
+      .clk    (clk),      // Reloj
+      .rst_n  (rst_n)     // Reset (activo en bajo)
   );
 
 endmodule
